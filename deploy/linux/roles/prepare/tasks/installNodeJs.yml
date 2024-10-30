@@ -13,7 +13,7 @@
     become: yes
 
   - name: download nodejs rpm
-    shell: 'yum install https://rpm.nodesource.com/pub_16.x/nodistro/repo/nodesource-release-nodistro-1.noarch.rpm -y'
+    shell: 'yum install https://rpm.nodesource.com/pub_20.x/nodistro/repo/nodesource-release-nodistro-1.noarch.rpm -y'
     become: yes
     ignore_errors: yes
 
