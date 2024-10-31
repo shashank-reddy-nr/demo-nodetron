@@ -11,6 +11,11 @@
       replace: 'repo_gpgcheck=0'
     when: gcp_repo_exist.stat.exists == True
     become: yes
+  - name: Import NodeSource GPG key
+    rpm_key:
+      state: present
+      key: https://rpm.nodesource.com/pub/el/NODESOURCE-GPG-SIGNING-KEY-EL
+    become: yes
 
   - name: download nodejs rpm
     shell: 'yum install https://rpm.nodesource.com/pub_20.x/nodistro/repo/nodesource-release-nodistro-1.noarch.rpm -y'
