@@ -12,6 +12,18 @@
     when: gcp_repo_exist.stat.exists == True
     become: yes
 
+  - name: Remove incorrect NodeSource GPG key
+    file:
+        path: /etc/pki/rpm-gpg/NODESOURCE-NSOLID-GPG-SIGNING-KEY-EL
+        state: absent
+    become: yes
+
+  - name: Import correct NodeSource GPG key
+    rpm_key:
+      state: present
+      key: https://rpm.nodesource.com/pub/el/NODESOURCE-GPG-SIGNING-KEY-EL
+    become: yes
+
   - name: download nodejs rpm
     shell: 'yum install https://rpm.nodesource.com/pub_20.x/nodistro/repo/nodesource-release-nodistro-1.noarch.rpm -y'
     become: yes
