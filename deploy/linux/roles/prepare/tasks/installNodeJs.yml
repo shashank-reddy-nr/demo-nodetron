@@ -1,7 +1,7 @@
 - name: Ensure GCP repo file exists and modify it if necessary
   hosts: all
   tasks:
-    - name: Check GCP repo file exist
+    - name: Check GCP repo file exists
       stat:
         path: /etc/yum.repos.d/google-cloud.repo
       register: gcp_repo_exist
@@ -28,19 +28,24 @@
       become: yes
 
     - name: Download NodeSource RPM
-      shell: 'yum install https://rpm.nodesource.com/pub_20.x/nodistro/repo/nodesource-release-nodistro-1.noarch.rpm -y'
+      shell: 'yum install -y https://rpm.nodesource.com/pub_20.x/nodistro/repo/nodesource-release-nodistro-1.noarch.rpm'
       become: yes
       ignore_errors: yes
+
+    - name: Ensure NodeSource repository is enabled
+      yum_repository:
+        name: nodesource
+        description: Node.js Packages for Enterprise Linux
+        baseurl: https://rpm.nodesource.com/pub_20.x/el/7/x86_64
+        gpgcheck: yes
+        gpgkey: https://rpm.nodesource.com/pub/el/NODESOURCE-GPG-SIGNING-KEY-EL
+        enabled: yes
+      become: yes
 
     - name: Install Node.js from NodeSource
       yum:
         name: nodejs
         state: present
-        enablerepo: nodesource
-        disable_gpg_check: no
-      args:
-        setopt:
-          - nodesource-nodejs.module_hotfixes=1
       become: yes
 
     - name: Install build essentials for native modules
