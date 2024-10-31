@@ -1,38 +1,38 @@
 ---
 
 - block:
-  - name: install python-setuptools
+  - name: Ensure python3 and python3-setuptools are installed
     yum:
-      name: python-setuptools
+      name: python3-setuptools
       state: installed
     ignore_errors: yes
     become: yes
 
   - name: check if pip is already installed
-    shell: whereis pip | grep "bin/pip" | wc -l
+    shell: whereis pip3 | grep "bin/pip3" | wc -l
     register: pip_installed
   - name: check if pip is local
-    shell: which pip | grep -E "usr/bin|usr/local" | wc -l
+    shell: which pip3 | grep -E "usr/bin|usr/local" | wc -l
     register: pip_local
     when: pip_installed.stdout|int == 1
 
   - name: Uninstalling system pip
-    shell: pip uninstall -y pip
+    shell: pip3 uninstall -y pip
     become: yes
     ignore_errors: yes
     when: pip_installed.stdout|int == 1 and pip_local.stdout|int == 0
-  
+
   - name: Installing latest pip - fetch
-    shell: curl -sSL https://bootstrap.pypa.io/pip/2.7/get-pip.py -o get-pip.py
+    shell: curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py
     when: (pip_installed.stdout|int == 0) or (pip_installed.stdout|int == 1 and pip_local.stdout|int == 0)
-  
+
   - name: Installing pip
-    shell: python get-pip.py "pip < 21.0" --force-reinstall
+    shell: python3 get-pip.py "pip < 21.0" --force-reinstall
     become: yes
     when: (pip_installed.stdout|int == 0) or (pip_installed.stdout|int == 1 and pip_local.stdout|int == 0)
 
   - name: Get pip path
-    shell: which pip
+    shell: which pip3
     register: pip_path
 
   - name: install supervisor with easy_install
@@ -80,8 +80,8 @@
     replace:
       dest: /etc/init.d/supervisord
       regexp: '/usr/local/bin'
-      replace: '/usr/bin'  
-    when: localbinsupervisordfile.stat.exists == False  
+      replace: '/usr/bin'
+    when: localbinsupervisordfile.stat.exists == False
     become: yes
 
   - name: install superlance for memory restart
